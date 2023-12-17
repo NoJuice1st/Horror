@@ -1,35 +1,59 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Flashlight : MonoBehaviour
+public class FlashLight : MonoBehaviour
 {
     public bool isOn;
     public Light light;
-    public AudioSource source;
-    public float charge;
+    public AudioClip click;
+    private AudioSource source;
 
-    void Update()
+    public float flashlightPower = 75;
+
+    private void Start()
     {
-        light.enabled = isOn;
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Switch();
-        }
-
-        // TASK:
-        // flashlight discharges when on
-        // does not work when no energy
-
-        // BONUS:
-        // Reduce intensity or flicker light depending on charge
-        // Show charge level visually
-
-        // POST Flashlight.cs from github
+        source = GetComponent<AudioSource>();
     }
 
-    void Switch()
+    private void Update()
     {
-        isOn = !isOn;
-        source.Play();
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            isOn = !isOn;
+            source.PlayOneShot(click);
+        }
+
+        light.enabled = isOn;
+
+        if (isOn && flashlightPower > 0)
+        {
+            flashlightPower -= Time.deltaTime * 2;
+            print(flashlightPower);
+
+
+
+            if (flashlightPower < 75 && flashlightPower > 50)
+            {
+                light.intensity = Random.Range(1.75f, 2f);
+            }
+            else if (flashlightPower < 50 && flashlightPower > 25)
+            {
+                light.intensity = Random.Range(1f, 1.25f);
+            }
+            else if(flashlightPower < 25 && flashlightPower > 5)
+            {
+                light.intensity = Random.Range(0.1f, 1f);
+            }
+            else if(flashlightPower < 5 && flashlightPower > 0)
+            {
+                light.intensity = Random.Range(0.05f, 0.5f);
+            }
+            else if(flashlightPower <= 0)
+            {
+                light.intensity = 0;
+            }
+        }
+
     }
 }
